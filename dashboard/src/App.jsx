@@ -86,8 +86,8 @@ export default function App() {
       {/* ── Header ── */}
       <header style={styles.header}>
         <div>
-          <div style={styles.title}>🍺 How Muddy?</div>
-          <div style={styles.subtitle}>Live occupancy · Muddy Charles Pub · MIT</div>
+          <div style={styles.title}>How Muddy? 🍺</div>
+          <div style={styles.subtitle}>Live occupancy of the Muddy Charles Pub @ MIT</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
           <div style={styles.lastUpdated}>
@@ -160,7 +160,7 @@ export default function App() {
 
         {/* ── Footer ── */}
         <div style={{ textAlign: 'center', fontSize: 12, color: '#9ca3af', paddingBottom: 16 }}>
-          6.1820 Mobile and Sensor Computing · Spring 2026 · Ria Verma · Elaine Wang · Eileen Zu
+          6.1820 Mobile and Sensor Computing · Spring 2026 | Ria Verma, Elaine Wang, Eileen Zu
         </div>
       </main>
     </div>

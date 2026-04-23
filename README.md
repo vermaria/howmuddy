@@ -123,29 +123,50 @@ See [`docs/HARDWARE.md`](docs/HARDWARE.md) for wiring and flashing instructions.
 
 ---
 
+## Pilot Demo (2 tables, 8 chairs, no hardware)
+
+Our initial build targets a subsection of the pub — 2 tables with 4 chairs each — before scaling to the full floor plan. To run the whole stack locally, use four terminals:
+
+```bash
+# Terminal 1 — backend (use PORT=5001 if macOS AirPlay has 5000)
+cd backend && source .venv/bin/activate
+PORT=5001 python run.py
+
+# Terminal 2 — seed the pilot layout
+cd scripts && source ../backend/.venv/bin/activate
+python seed_db.py --profile pilot --reset
+
+# Terminal 3 — fake sensor traffic
+cd scripts && source ../backend/.venv/bin/activate
+python simulate_sensors.py --api http://localhost:5001 --tables 2 --chairs 8
+
+# Terminal 4 — dashboard
+cd dashboard && npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173). When we're ready for the full pub, reseed with `python seed_db.py --profile full --reset`.
+
+> **Note:** if you run the backend on port 5000 (no AirPlay conflict), drop the `PORT=5001` and change `--api` / `dashboard/vite.config.js` back to `5000`.
+
+---
+
 ## Hardware BOM
 
-| Item | Source | Unit Cost | Qty | Total |
-|------|--------|-----------|-----|-------|
-| XIAO ESP32-C3 | DigiKey | $4.99 | 12 | $59.88 |
-| FSR (Force Sensitive Resistor) | Adafruit | $3.95 | 8 | $31.60 |
-| 1S LiPo Battery | Amazon | $4.75 | 10 | $47.50 |
-| VL53L0X ToF Sensor | Adafruit | $14.95 | 2 | $29.90 |
-| 1S LiPo Charger | Amazon | $32.99 | 1 | $32.99 |
-| **Total** | | | | **$201.87** |
+- **XIAO ESP32-C3** × 12 — DigiKey
+- **FSR (Force Sensitive Resistor)** × 8 — Adafruit
+- **1S LiPo Battery** × 10 — Amazon
+- **1S LiPo Charger** × 1 — Amazon
 
 ---
 
 ## Metrics Targets
 
-| Metric | Target |
-|--------|--------|
-| Occupancy accuracy | ≥ 95% vs. ground truth |
-| Update latency | ≤ 10 seconds |
-| API response time | ≤ 300 ms |
-| Sensor uptime | ≥ 99% over 6 hours |
-| Battery life | ≥ 8 hours |
-| Wait time error | ≤ 5 minutes |
+- **Occupancy accuracy** — ≥ 95% vs. ground truth
+- **Update latency** — ≤ 10 seconds
+- **API response time** — ≤ 300 ms
+- **Sensor uptime** — ≥ 99% over 6 hours
+- **Battery life** — ≥ 8 hours
+- **Wait time error** — ≤ 5 minutes
 
 ---
 

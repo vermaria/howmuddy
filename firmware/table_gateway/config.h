@@ -8,7 +8,7 @@
 #define WIFI_PASSWORD ""             // Open/cert networks: leave blank, see docs
 
 // ─── Backend API ──────────────────────────────────────────────────────────
-#define API_HOST    "howmuddy.mit.edu"
+#define API_HOST    "10.31.134.241"
 #define API_PORT    5000
 #define API_PATH    "/api/report"
 #define UPLOAD_INTERVAL_MS  5000    // batch-send every 5 seconds

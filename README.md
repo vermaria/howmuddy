@@ -8,7 +8,7 @@
 
 ## Overview
 
-How Muddy? is a low-cost, passive sensing system that continuously estimates seat occupancy at the Muddy Charles Pub and exposes that data via a public-facing dashboard and REST API.
+How Muddy? is a low-cost sensing system that estimates seat occupancy at the Muddy Charles Pub and exposes it through a dashboard and REST API.
 
 ### System Architecture
 
@@ -107,7 +107,7 @@ python run.py
 cd dashboard
 npm install
 npm run dev
-# Dashboard at http://localhost:5173
+# Dashboard at the printed Vite URL (usually http://localhost:5173)
 ```
 
 ### 3. Simulate Sensors (no hardware required)
@@ -144,18 +144,19 @@ python simulate_sensors.py --api http://localhost:5001 --tables 2 --chairs 8
 cd dashboard && npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). When we're ready for the full pub, reseed with `python seed_db.py --profile full --reset`.
+Open the Vite URL shown in terminal (usually [http://localhost:5173](http://localhost:5173)).  
+When you're ready for the full pub, reseed with `python seed_db.py --profile full --reset`.
 
 > **Note:** if you run the backend on port 5000 (no AirPlay conflict), drop the `PORT=5001` and change `--api` / `dashboard/vite.config.js` back to `5000`.
 
 ---
 
-## Hardware BOM
+## Hardware
 
-- **XIAO ESP32-C3** × 12 — DigiKey
-- **FSR (Force Sensitive Resistor)** × 8 — Adafruit
-- **1S LiPo Battery** × 10 — Amazon
-- **1S LiPo Charger** × 1 — Amazon
+- **XIAO ESP32-C3** × 12
+- **FSR (Force Sensitive Resistor)** × 8
+- **1S LiPo Battery** × 10
+- **1S LiPo Charger** × 1
 
 ---
 
@@ -167,6 +168,14 @@ Open [http://localhost:5173](http://localhost:5173). When we're ready for the fu
 - **Sensor uptime** — ≥ 99% over 6 hours
 - **Battery life** — ≥ 8 hours
 - **Wait time error** — ≤ 5 minutes
+
+---
+
+## Runtime Status Notes
+
+- Tables are shown as online only when a recent gateway report is received.
+- Chairs are shown as online only when recent chair data appears in gateway uploads.
+- Staleness is controlled in backend config (`TABLE_STALE_SECONDS`, `CHAIR_STALE_SECONDS`).
 
 ---
 

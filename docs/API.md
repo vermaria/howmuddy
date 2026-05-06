@@ -75,6 +75,8 @@ Current occupancy for all tables.
       "section": "left",
       "x_pos": 0.12,
       "y_pos": 0.22,
+      "is_online": true,
+      "last_seen": "2026-04-22T14:00:00+00:00",
       "occupied_seats": 2,
       "total_seats": 4,
       "chairs": [ /* see chair object below */ ]
@@ -82,6 +84,13 @@ Current occupancy for all tables.
   ]
 }
 ```
+
+**Table fields**
+
+| Field | Type | Notes |
+|---|---|---|
+| `is_online` | bool | True if the backend has seen a recent gateway report for this table |
+| `last_seen` | string \| null | Timestamp of last gateway report for this table |
 
 **Chair object**
 ```json

@@ -1,31 +1,29 @@
 #pragma once
 
 // ─── Table Identity ───────────────────────────────────────────────────────
-#define TABLE_ID "T1"   // unique per gateway (T1, T2, … T10)
+#define TABLE_ID     "T1"
+#define TABLE_ID_NUM 1
 
 // ─── WiFi Credentials ─────────────────────────────────────────────────────
-#define WIFI_SSID     "MITsecure"    // MIT on-campus network
-#define WIFI_PASSWORD ""             // Open/cert networks: leave blank, see docs
+#define WIFI_SSID     "MIT"            // your hotspot SSID
+#define WIFI_PASSWORD "RJ@cC_3UFZ" // your hotspot password
 
 // ─── Backend API ──────────────────────────────────────────────────────────
-#define API_HOST    "10.31.134.241"
+#define API_HOST    "10.29.143.185"          // your laptop's IP on the hotspot
 #define API_PORT    5000
 #define API_PATH    "/api/report"
-#define UPLOAD_INTERVAL_MS  5000    // batch-send every 5 seconds
+#define UPLOAD_INTERVAL_MS  5000
 
 // ─── RSSI-Based Proximity ─────────────────────────────────────────────────
-// Number of RSSI samples to average per chair before assigning it to a table
-#define RSSI_SMOOTHING_N    8
-// A chair is "ours" if its smoothed RSSI is stronger than this threshold (dBm)
-// Typical: chairs at same table ≈ -50 dBm, neighboring table ≈ -75 dBm
-#define RSSI_CLAIM_THRESHOLD   -65  // dBm
-// If a chair's best-seen gateway changes, reassign after this many reports
-#define REASSIGN_HYSTERESIS     3
+#define RSSI_SMOOTHING_N      8
+#define RSSI_CLAIM_THRESHOLD  -65
+#define REASSIGN_HYSTERESIS   3
 
 // ─── ESP-NOW ──────────────────────────────────────────────────────────────
-#define ESPNOW_CHANNEL  1
-#define MAX_CHAIRS      16   // max chairs tracked simultaneously
+#define ESPNOW_CHANNEL    1
+#define MAX_CHAIRS        16
+#define BEACON_INTERVAL_MS 200
 
 // ─── Debug ────────────────────────────────────────────────────────────────
-#define SERIAL_BAUD   115200
-#define DEBUG_ENABLED true
+#define SERIAL_BAUD     115200
+#define DEBUG_ENABLED   1

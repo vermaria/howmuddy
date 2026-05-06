@@ -20,6 +20,7 @@
  #include <Arduino.h>
  #include <esp_now.h>
  #include <WiFi.h>
+ #include <esp_wifi.h>
  #include <esp_sleep.h>
  #include <time.h>
  #include "config.h"
@@ -61,13 +62,13 @@
  static bool       g_sendSuccess  = false;
  
  // ─── ESP-NOW callbacks ────────────────────────────────────────────────────
- void onDataSent(const uint8_t *mac, esp_now_send_status_t status) {
-   g_sendSuccess  = (status == ESP_NOW_SEND_SUCCESS);
-   g_sendComplete = true;
- #if DEBUG_ENABLED
-   Serial.printf("[ESP-NOW] Send %s\n", g_sendSuccess ? "OK" : "FAIL");
- #endif
- }
+void onDataSent(const wifi_tx_info_t *info, esp_now_send_status_t status) {
+  g_sendSuccess  = (status == ESP_NOW_SEND_SUCCESS);
+  g_sendComplete = true;
+#if DEBUG_ENABLED
+  Serial.printf("[ESP-NOW] Send %s\n", g_sendSuccess ? "OK" : "FAIL");
+#endif
+}
  
  void onBeacon(const esp_now_recv_info_t *info, const uint8_t *data, int len) {
    if (len < (int)sizeof(TableBeacon)) return;
@@ -177,10 +178,19 @@
    digitalWrite(FSR_VCC_PIN, LOW);
    analogReadResolution(12);
  
-   WiFi.mode(WIFI_STA);
-   WiFi.disconnect();
- 
-   if (esp_now_init() != ESP_OK) {
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  esp_wifi_set_promiscuous(true);
+  esp_wifi_set_channel(ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE);
+  esp_wifi_set_promiscuous(false);
+
+#if DEBUG_ENABLED
+  uint8_t primary; wifi_second_chan_t second;
+  esp_wifi_get_channel(&primary, &second);
+  Serial.printf("[Chair %s] Locked to channel %u\n", CHAIR_ID, primary);
+#endif
+
+  if (esp_now_init() != ESP_OK) {
  #if DEBUG_ENABLED
      Serial.println("[ESP-NOW] init failed — rebooting");
  #endif

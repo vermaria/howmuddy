@@ -2,7 +2,7 @@
 
 // ─── Chair Identity ────────────────────────────────────────────────────────
 // Set a unique ID per chair before flashing (e.g., "T1C1" = Table 1, Chair 1)
-#define CHAIR_ID "T1C1"
+#define CHAIR_ID "T1C2"
 
 // ─── FSR Configuration ────────────────────────────────────────────────────
 #define FSR_PIN          A0      // ADC pin wired to FSR voltage divider
@@ -30,7 +30,7 @@
 #define GATEWAY_MAC   { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }
 
 // Channel must match the gateway
-#define ESPNOW_CHANNEL  1
+#define ESPNOW_CHANNEL  6   // must match the channel the gateway prints on boot
 
 // ─── Debug ────────────────────────────────────────────────────────────────
 #define SERIAL_BAUD     115200

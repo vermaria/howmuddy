@@ -229,7 +229,7 @@
    // Add broadcast peer for beacons
    esp_now_peer_info_t bcast{};
    memcpy(bcast.peer_addr, BCAST_ADDR, 6);
-   bcast.channel = channel;
+   bcast.channel = 0;
    bcast.encrypt = false;
    esp_now_add_peer(&bcast);
  

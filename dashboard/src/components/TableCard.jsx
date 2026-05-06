@@ -3,9 +3,21 @@
  * Displays occupancy for a single table with chair-level detail.
  */
 export default function TableCard({ table }) {
-  const { id, label, chairs = [], occupied_seats, total_seats, section } = table
+  const {
+    id,
+    label,
+    chairs = [],
+    occupied_seats,
+    total_seats,
+    section,
+    is_online = false,
+    last_seen = null,
+  } = table
   const ratio = total_seats > 0 ? occupied_seats / total_seats : 0
   const available = total_seats - occupied_seats
+  const tableStatusText = is_online
+    ? 'Gateway online'
+    : `Gateway offline${last_seen ? ` · last seen ${new Date(last_seen).toLocaleTimeString()}` : ''}`
 
   const bgColor =
     ratio >= 0.85 ? '#fef2f2' :
@@ -38,6 +50,9 @@ export default function TableCard({ table }) {
               {section}
             </div>
           )}
+          <div style={{ fontSize: 11, color: is_online ? '#15803d' : '#b91c1c', marginTop: 4 }}>
+            {tableStatusText}
+          </div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontWeight: 700, fontSize: 20 }}>

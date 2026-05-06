@@ -26,6 +26,7 @@ from .occupancy import (
     mark_stale_chairs,
     estimate_wait_minutes,
     occupancy_history,
+    table_presence,
 )
 
 api_bp = Blueprint("api", __name__)
@@ -85,9 +86,14 @@ def status_all():
     """Return occupancy status for all tables."""
     mark_stale_chairs()
     tables = Table.query.all()
+    payload = []
+    for table in tables:
+        table_data = table.to_dict()
+        table_data.update(table_presence(table.id))
+        payload.append(table_data)
     return jsonify({
         "ts":     datetime.now(timezone.utc).isoformat(),
-        "tables": [t.to_dict() for t in tables],
+        "tables": payload,
     }), 200
 
 
@@ -98,7 +104,9 @@ def status_one(table_id: str):
     table = db.session.get(Table, table_id)
     if table is None:
         return jsonify({"error": f"table {table_id!r} not found"}), 404
-    return jsonify(table.to_dict()), 200
+    table_data = table.to_dict()
+    table_data.update(table_presence(table.id))
+    return jsonify(table_data), 200
 
 
 # ─── Wait Time ────────────────────────────────────────────────────────────

@@ -1,8 +1,8 @@
 #pragma once
 
 // ─── Table Identity ───────────────────────────────────────────────────────
-#define TABLE_ID     "T1"
-#define TABLE_ID_NUM 1
+#define TABLE_ID     "T2"
+#define TABLE_ID_NUM 2
 
 // ─── WiFi Credentials ─────────────────────────────────────────────────────
 #define WIFI_SSID     "MIT"            // your hotspot SSID

@@ -18,6 +18,8 @@ class Config:
 
     # Chair stale timeout: marks a chair offline if no report in this many seconds
     CHAIR_STALE_SECONDS = int(os.getenv("CHAIR_STALE_SECONDS", "30"))
+    # Table stale timeout: marks a gateway offline if no report in this many seconds
+    TABLE_STALE_SECONDS = int(os.getenv("TABLE_STALE_SECONDS", "30"))
 
     # Wait-time model parameters
     # Estimated average table turn time in minutes at the Muddy

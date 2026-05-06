@@ -19,6 +19,7 @@ from . import db
 from .models import Chair, Table, ChairReport
 
 logger = logging.getLogger(__name__)
+_table_last_seen: Dict[str, datetime] = {}
 
 
 # ─── Report Processing ────────────────────────────────────────────────────
@@ -52,6 +53,8 @@ def process_gateway_report(
         table = Table(id=table_id, label=f"Table {table_id}", capacity=len(chairs_data))
         db.session.add(table)
         logger.info("Auto-created table %s", table_id)
+
+    _table_last_seen[table_id] = server_ts
 
     updated_chairs = []
     for entry in chairs_data:
@@ -95,6 +98,24 @@ def process_gateway_report(
         logger.debug("Report from %s received outside operating hours", table_id)
 
     return table.to_dict()
+
+
+def table_presence(table_id: str) -> Dict[str, Optional[str]]:
+    """
+    Return online/offline status for a table based on most recent gateway report.
+    """
+    stale_seconds = current_app.config.get("TABLE_STALE_SECONDS",
+                                           current_app.config["CHAIR_STALE_SECONDS"])
+    last_seen = _table_last_seen.get(table_id)
+    if last_seen is None:
+        return {"is_online": False, "last_seen": None}
+
+    threshold = datetime.now(timezone.utc) - timedelta(seconds=stale_seconds)
+    is_online = last_seen >= threshold
+    return {
+        "is_online": is_online,
+        "last_seen": last_seen.isoformat(),
+    }
 
 
 def mark_stale_chairs() -> int:

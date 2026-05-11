@@ -8,7 +8,7 @@
 
 ## Overview
 
-How Muddy? is a low-cost sensing system that estimates seat occupancy at the Muddy Charles Pub and exposes it through a dashboard and REST API.
+How Muddy? is a low-cost, passive sensing system that continuously estimates seat occupancy at the Muddy Charles Pub and exposes that data via a public-facing dashboard and REST API.
 
 ### System Architecture
 

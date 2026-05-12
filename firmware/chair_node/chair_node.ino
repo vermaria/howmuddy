@@ -94,12 +94,20 @@ void onDataSent(const wifi_tx_info_t *info, esp_now_send_status_t status) {
      g_tables[slot].table_id = b.table_id;
      memcpy(g_tables[slot].mac, b.mac, 6);
      g_tables[slot].peer_added = false;
- 
+
+    uint8_t currentCh;
+    wifi_second_chan_t secondCh;
+    esp_wifi_get_channel(&currentCh, &secondCh); // Get the current active radio channel
+
      // Add as ESP-NOW peer so we can send back
      esp_now_peer_info_t peer{};
      memcpy(peer.peer_addr, b.mac, 6);
-     peer.channel = ESPNOW_CHANNEL;
+    //  peer.channel = ESPNOW_CHANNEL;
+    peer.channel = currentCh;
      peer.encrypt = false;
+
+
+
      if (esp_now_add_peer(&peer) == ESP_OK) g_tables[slot].peer_added = true;
    } else {
      // Exponential moving average to smooth RSSI
@@ -127,6 +135,34 @@ void onDataSent(const wifi_tx_info_t *info, esp_now_send_status_t status) {
    return best;
  }
  
+
+ void scanForTableChannel() {
+  bool found = false;
+  Serial.println("[Chair] Starting channel scan...");
+
+  for (uint8_t ch = 1; ch <= 11; ch++) {
+    // Set radio to specific channel
+    esp_wifi_set_promiscuous(true);
+    esp_wifi_set_channel(ch, WIFI_SECOND_CHAN_NONE);
+    esp_wifi_set_promiscuous(false);
+
+    Serial.printf("[Chair] Scanning channel %u...\n", ch);
+
+    // Listen for beacons on this channel for a short duration
+    uint32_t start = millis();
+    while (millis() - start < 150) { // Slightly shorter than BEACON_INTERVAL_MS
+      delay(10);
+      if (pickBestTable() != -1) {
+        Serial.printf("[Chair] Found Table on channel %u\n", ch);
+        found = true;
+        break;
+      }
+    }
+    if (found) break;
+  }
+  }
+
+
  // ─── FSR / ADC helpers (unchanged) ────────────────────────────────────────
  uint16_t readFSR() {
    digitalWrite(FSR_VCC_PIN, HIGH);
@@ -180,9 +216,17 @@ void onDataSent(const wifi_tx_info_t *info, esp_now_send_status_t status) {
  
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
-  esp_wifi_set_promiscuous(true);
-  esp_wifi_set_channel(ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE);
-  esp_wifi_set_promiscuous(false);
+  // esp_wifi_set_promiscuous(true);
+  // esp_wifi_set_channel(ESPNOW_CHANNEL, WIFI_SECOND_CHAN_NONE);
+  // esp_wifi_set_promiscuous(false);
+  if (esp_now_init() != ESP_OK) {
+    ESP.restart();
+  }
+  esp_now_register_send_cb(onDataSent);
+  esp_now_register_recv_cb(onBeacon);
+
+  // Initial scan to find the table before starting the main loop
+  scanForTableChannel();
 
 #if DEBUG_ENABLED
   uint8_t primary; wifi_second_chan_t second;
@@ -213,6 +257,9 @@ void onDataSent(const wifi_tx_info_t *info, esp_now_send_status_t status) {
    if (idx == -1) {
  #if DEBUG_ENABLED
      Serial.println("[Chair] No table beacon heard — skipping report");
+     Serial.println("[Chair] Link lost. Re-scanning channels...");
+     scanForTableChannel(); // Attempt to find the table on a new channel
+     return;
  #endif
      delay(REPORT_INTERVAL_MS);
      return;

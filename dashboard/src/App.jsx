@@ -73,9 +73,10 @@ export default function App() {
   const { tables, wait, history, loading, error, lastUpdated, refresh } =
     useOccupancy(60)
 
-  const totalSeats    = tables.reduce((s, t) => s + (t.total_seats    ?? 0), 0)
-  const occupiedSeats = tables.reduce((s, t) => s + (t.occupied_seats ?? 0), 0)
-  const freeSeats     = totalSeats - occupiedSeats
+  // Only count online chairs — offline chairs are neither free nor occupied
+  const onlineChairs  = tables.flatMap(t => (t.chairs ?? []).filter(c => c.is_online))
+  const occupiedSeats = onlineChairs.filter(c => c.is_occupied).length
+  const freeSeats     = onlineChairs.length - occupiedSeats
 
   const formatTime = (d) =>
     d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -86,8 +87,8 @@ export default function App() {
       {/* ── Header ── */}
       <header style={styles.header}>
         <div>
-          <div style={styles.title}>How Muddy? 🍺</div>
-          <div style={styles.subtitle}>Live occupancy of the Muddy Charles Pub @ MIT</div>
+          <div style={styles.title}>🍺 How Muddy?</div>
+          <div style={styles.subtitle}>Live occupancy · Muddy Charles Pub · MIT</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
           <div style={styles.lastUpdated}>
@@ -160,7 +161,7 @@ export default function App() {
 
         {/* ── Footer ── */}
         <div style={{ textAlign: 'center', fontSize: 12, color: '#9ca3af', paddingBottom: 16 }}>
-          6.1820 Mobile and Sensor Computing · Spring 2026 | Ria Verma, Elaine Wang, Eileen Zu
+          6.1820 Mobile and Sensor Computing · Spring 2026 · Ria Verma · Elaine Wang · Eileen Zu
         </div>
       </main>
     </div>

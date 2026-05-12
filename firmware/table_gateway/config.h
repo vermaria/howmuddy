@@ -9,7 +9,7 @@
 #define WIFI_PASSWORD "RJ@cC_3UFZ" // your hotspot password
 
 // ─── Backend API ──────────────────────────────────────────────────────────
-#define API_HOST    "10.29.143.185"          // your laptop's IP on the hotspot
+#define API_HOST    "10.29.139.235"          // your laptop's IP on the hotspot - need to change this when running backend
 #define API_PORT    5000
 #define API_PATH    "/api/report"
 #define UPLOAD_INTERVAL_MS  5000
